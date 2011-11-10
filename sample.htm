@@ -1,0 +1,132 @@
+<html>
+  <head>
+    <script src="lib/prototype-1.6.0.2.js"></script>
+    <script src='js/box2d/common/b2Settings.js'></script>
+    <script src='js/box2d/common/math/b2Vec2.js'></script>
+    <script src='js/box2d/common/math/b2Mat22.js'></script>
+    <script src='js/box2d/common/math/b2Math.js'></script>
+    <script src='js/box2d/collision/b2AABB.js'></script>
+    <script src='js/box2d/collision/b2Bound.js'></script>
+    <script src='js/box2d/collision/b2BoundValues.js'></script>
+    <script src='js/box2d/collision/b2Pair.js'></script>
+    <script src='js/box2d/collision/b2PairCallback.js'></script>
+    <script src='js/box2d/collision/b2BufferedPair.js'></script>
+    <script src='js/box2d/collision/b2PairManager.js'></script>
+    <script src='js/box2d/collision/b2BroadPhase.js'></script>
+    <script src='js/box2d/collision/b2Collision.js'></script>
+    <script src='js/box2d/collision/Features.js'></script>
+    <script src='js/box2d/collision/b2ContactID.js'></script>
+    <script src='js/box2d/collision/b2ContactPoint.js'></script>
+    <script src='js/box2d/collision/b2Distance.js'></script>
+    <script src='js/box2d/collision/b2Manifold.js'></script>
+    <script src='js/box2d/collision/b2OBB.js'></script>
+    <script src='js/box2d/collision/b2Proxy.js'></script>
+    <script src='js/box2d/collision/ClipVertex.js'></script>
+    <script src='js/box2d/collision/shapes/b2Shape.js'></script>
+    <script src='js/box2d/collision/shapes/b2ShapeDef.js'></script>
+    <script src='js/box2d/collision/shapes/b2BoxDef.js'></script>
+    <script src='js/box2d/collision/shapes/b2CircleDef.js'></script>
+    <script src='js/box2d/collision/shapes/b2CircleShape.js'></script>
+    <script src='js/box2d/collision/shapes/b2MassData.js'></script>
+    <script src='js/box2d/collision/shapes/b2PolyDef.js'></script>
+    <script src='js/box2d/collision/shapes/b2PolyShape.js'></script>
+    <script src='js/box2d/dynamics/b2Body.js'></script>
+    <script src='js/box2d/dynamics/b2BodyDef.js'></script>
+    <script src='js/box2d/dynamics/b2CollisionFilter.js'></script>
+    <script src='js/box2d/dynamics/b2Island.js'></script>
+    <script src='js/box2d/dynamics/b2TimeStep.js'></script>
+    <script src='js/box2d/dynamics/contacts/b2ContactNode.js'></script>
+    <script src='js/box2d/dynamics/contacts/b2Contact.js'></script>
+    <script src='js/box2d/dynamics/contacts/b2ContactConstraint.js'></script>
+    <script src='js/box2d/dynamics/contacts/b2ContactConstraintPoint.js'></script>
+    <script src='js/box2d/dynamics/contacts/b2ContactRegister.js'></script>
+    <script src='js/box2d/dynamics/contacts/b2ContactSolver.js'></script>
+    <script src='js/box2d/dynamics/contacts/b2CircleContact.js'></script>
+    <script src='js/box2d/dynamics/contacts/b2Conservative.js'></script>
+    <script src='js/box2d/dynamics/contacts/b2NullContact.js'></script>
+    <script src='js/box2d/dynamics/contacts/b2PolyAndCircleContact.js'></script>
+    <script src='js/box2d/dynamics/contacts/b2PolyContact.js'></script>
+    <script src='js/box2d/dynamics/b2ContactManager.js'></script>
+    <script src='js/box2d/dynamics/b2World.js'></script>
+    <script src='js/box2d/dynamics/b2WorldListener.js'></script>
+    <script src='js/box2d/dynamics/joints/b2JointNode.js'></script>
+    <script src='js/box2d/dynamics/joints/b2Joint.js'></script>
+    <script src='js/box2d/dynamics/joints/b2JointDef.js'></script>
+    <script src='js/box2d/dynamics/joints/b2DistanceJoint.js'></script>
+    <script src='js/box2d/dynamics/joints/b2DistanceJointDef.js'></script>
+    <script src='js/box2d/dynamics/joints/b2Jacobian.js'></script>
+    <script src='js/box2d/dynamics/joints/b2GearJoint.js'></script>
+    <script src='js/box2d/dynamics/joints/b2GearJointDef.js'></script>
+    <script src='js/box2d/dynamics/joints/b2MouseJoint.js'></script>
+    <script src='js/box2d/dynamics/joints/b2MouseJointDef.js'></script>
+    <script src='js/box2d/dynamics/joints/b2PrismaticJoint.js'></script>
+    <script src='js/box2d/dynamics/joints/b2PrismaticJointDef.js'></script>
+    <script src='js/box2d/dynamics/joints/b2PulleyJoint.js'></script>
+    <script src='js/box2d/dynamics/joints/b2PulleyJointDef.js'></script>
+    <script src='js/box2d/dynamics/joints/b2RevoluteJoint.js'></script>
+    <script src='js/box2d/dynamics/joints/b2RevoluteJointDef.js'></script>
+
+    <script src='game/box2d_car_game.js'></script>
+    <script src='game/draw_world.js'></script>
+
+    <script type="text/javascript">
+      carGame = { };
+      var canvas;
+      var ctx;
+      var canvasWidth;
+      var canvasHeight;
+
+      Event.observe(window, "load", function() {
+        carGame.world = createWorld();
+        createGround(carGame.world);
+        createABox(carGame.world);
+
+        console.log("The world is created. ", carGame.world); // get the reference of the context
+        canvas = document.getElementById('game');
+        ctx = canvas.getContext('2d');
+        canvasWidth = parseInt(canvas.width);
+        canvasHeight = parseInt(canvas.height);
+
+        step(carGame.world, ctx);
+      });
+
+      var step = function(world, ctx) {
+        world.Step(1.0/60, 1);
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+        drawWorld(carGame.world, ctx);
+        setTimeout(function(){step(world, ctx);}, 10);
+      }
+
+      var createABox = function(world){
+        boxSd = new b2BoxDef();
+        boxSd.density = 1.0;
+        boxSd.friction = 1.5;
+        boxSd.restitution = .4;
+        boxSd.extents.Set(40, 20);
+        var boxBd = new b2BodyDef();
+        boxBd.AddShape(boxSd);
+        boxBd.position.Set(50,210);
+        world.CreateBody(boxBd);
+      };
+
+      var createWorld = function() {
+        // set the size of the world
+        var worldAABB = new b2AABB();
+        worldAABB.minVertex.Set(-4000, -4000);
+        worldAABB.maxVertex.Set(4000, 4000);
+        // Define the gravity
+        var gravity = new b2Vec2(0,300);
+        // set to ignore sleeping object
+        var doSleep = false;
+        // finally create the world with the size, gravity, and sleep object parameter.
+        var world = new b2World(worldAABB, gravity, doSleep);
+        return world;
+      }
+    </script>
+  </head>
+  <body>
+  <canvas id="game" width="600" height="400">
+    GET A REAL BROWSER!
+  </canvas>
+  </body>
+</html>
